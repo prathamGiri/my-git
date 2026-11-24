@@ -1,12 +1,12 @@
-name: Build on WSL
+name: Build and Test on WSL
 
 on:
   push:
-    branches: [ master ]      # change if your branch is "master"
+    branches: [ master ]
   workflow_dispatch:
 
 env:
-  BUILD_DIR: /home/hp/projects/my-git/build
+  BUILD_DIR: build   # inside the runner's checkout, separate from your local build
 
 jobs:
   build:
@@ -15,10 +15,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Configure
-        run: cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Release
+        run: cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build
         run: cmake --build "$BUILD_DIR" -j"$(nproc)"
 
-      - name: Show output
-        run: ls -la "$BUILD_DIR"
+      - name: Test
+        run: ctest --test-dir "$BUILD_DIR" --output-on-failure -j"$(nproc)"

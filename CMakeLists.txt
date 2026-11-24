@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 4.2)
 project(mygit VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -27,7 +27,7 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 add_executable(tests
-    tests/sha1_test.cpp
+    tests/sha1_tests.cpp
 )
 target_link_libraries(tests PRIVATE mygit_lib GTest::gtest_main)
 
