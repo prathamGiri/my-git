@@ -18,7 +18,7 @@ namespace {
     constexpr uint32_t k2 = 0x8F1BBCDC;
     constexpr uint32_t k3 = 0xCA62C1D6;
 
-    constexpr std::string digits = "0123456789abcdef";
+    constexpr char digits[] = "0123456789abcdef";
     constexpr size_t block_size = 64;
     constexpr int num_rounds = 80;
     constexpr size_t length_offset = 56;
