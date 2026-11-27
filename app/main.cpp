@@ -12,7 +12,9 @@ int main(int argc, char* argv[]){
     }
     std::string command = argv[1];
     std::vector<std::string> args(argv+2, argv+argc); 
-    if (command == "hash-object") return hash_object(args);
+    if (command == "hash-object") {
+        return hash_object(args);
+    }
 
     std::cerr << "Command Not Found\n";
     return 1;

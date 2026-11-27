@@ -60,15 +60,16 @@ TEST(HashObjectTest, ABCFile){
     std::string output = testing::internal::GetCapturedStdout();
 
     EXPECT_EQ(rc, 0);
-    EXPECT_EQ(output, "8baef1b4abc478178b004d62031cf7fe6db6f903\n");
+    EXPECT_EQ(output, "f2ba8f84ab5c1bce84a7b441cb1959cfc7093b7f\n");
 }
 
 TEST(HashObjectTest, ContentPassed){
     testing::internal::CaptureStdout();
     std::vector<std::string> input = {"--stdin"};
-    int rc = hash_object(input);
+    std::istringstream in("abc");
+    int rc = hash_object(input, in);
     std::string output = testing::internal::GetCapturedStdout();
 
     EXPECT_EQ(rc, 0);
-    EXPECT_EQ(output, "8baef1b4abc478178b004d62031cf7fe6db6f903\n");
+    EXPECT_EQ(output, "f2ba8f84ab5c1bce84a7b441cb1959cfc7093b7f\n");
 }
