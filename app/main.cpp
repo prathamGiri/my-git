@@ -1,24 +1,19 @@
-#include "mygit/sha1.hpp"
+#include "mygit/commands.hpp"
 
 #include <string>
 #include <iostream>
-#include <sstream>
+#include <vector>
 
+int main(int argc, char* argv[]){
+    if (argc < 2)
+    {
+        std::cerr << "Usage: mygit <command> [args]\n";
+        return 1;
+    }
+    std::string command = argv[1];
+    std::vector<std::string> args(argv+2, argv+argc); 
+    if (command == "hash-object") return hash_object(args);
 
-std::string command_parser(std::string &inp_command){
-    std::string out = "Command taken";
-    return out;
-}
-
-int main(){
-    std::string input;
-    std::getline(std::cin, input);
-    std::cout << sha1(input) << std::endl;
-    // std::string inp_command, line;
-    // while (getline(std::cin, line))
-    // {
-    //     inp_command+=line;
-    // }
-    // std::string result = command_parser(inp_command);
-    // std::cout << result;
+    std::cerr << "Command Not Found\n";
+    return 1;
 }

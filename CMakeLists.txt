@@ -8,7 +8,10 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(mygit_lib src/sha1.cpp)
+add_library(mygit_lib 
+    src/core/sha1.cpp
+    src/commands/hash_object.cpp
+)
 target_include_directories(mygit_lib
     PUBLIC  ${PROJECT_SOURCE_DIR}/include
     PRIVATE ${PROJECT_SOURCE_DIR}/src
@@ -32,8 +35,13 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
-add_executable(tests tests/sha1_test.cpp)
+add_executable(tests 
+    tests/sha1_test.cpp
+    tests/hash_object_test.cpp
+)
 target_link_libraries(tests PRIVATE mygit_lib GTest::gtest_main)
-
+target_compile_definitions(tests PRIVATE
+    TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/data")
+    
 include(GoogleTest)
 gtest_discover_tests(tests)
