@@ -17,10 +17,13 @@ int hash_object(std::vector<std::string> &args){
     {
         std::string content;
         std::cin >> content;
-        std::cout << sha1("blob " + std::string(content.size()) + "\0" + content) << "\n";
+        std::cout << sha1("blob " + std::to_string(content.size()) + "\0" + content) << "\n";
         return 0;
-    }else
+    }else if (args[0][0]  == '-')
     {
+        std::cerr << "Command Not Found\n";
+        return 1;
+    }else {
         
         std::ifstream in(args[0], std::ios::binary);
         std::string file_content(
@@ -29,11 +32,8 @@ int hash_object(std::vector<std::string> &args){
             (std::istreambuf_iterator<char>(in)), 
             std::istreambuf_iterator<char>()
         );
-        file_content = "blob " + std::string(file_content.size()) + "\0" + file_content;
+        file_content = "blob " + std::to_string(file_content.size()) + "\0" + file_content;
         std::cout << sha1(file_content) << "\n";
         return 0;
     }
-
-    std::cerr << "Command Not Found\n";
-    return 1;
 }

@@ -5,7 +5,8 @@
 
 TEST(HashObjectTest, LessThanOne){
     testing::internal::CaptureStderr();
-    int rc = hash_object({});
+    std::vector<std::string> input = {};
+    int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStderr();
 
     EXPECT_EQ(rc, 1);
@@ -14,7 +15,8 @@ TEST(HashObjectTest, LessThanOne){
 
 TEST(HashObjectTest, UnknownOption){
     testing::internal::CaptureStderr();
-    int rc = hash_object({"--unknown"});
+    std::vector<std::string> input = {"--unknown"};
+    int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStderr();
 
     EXPECT_EQ(rc, 1);
@@ -23,7 +25,8 @@ TEST(HashObjectTest, UnknownOption){
 
 TEST(HashObjectTest, MoreThanTwo){
     testing::internal::CaptureStderr();
-    int rc = hash_object({"--stdin", "abc.txt"});
+    std::vector<std::string> input = {"--stdin", "abc.txt"};
+    int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStderr();
 
     EXPECT_EQ(rc, 1);
@@ -32,7 +35,8 @@ TEST(HashObjectTest, MoreThanTwo){
 
 TEST(HashObjectTest, FileNotPresent){
     testing::internal::CaptureStderr();
-    int rc = hash_object({std::string(TEST_DATA_DIR) + "/nofile.txt"});
+    std::vector<std::string> input = {std::string(TEST_DATA_DIR) + "/nofile.txt"};
+    int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStderr();
 
     EXPECT_EQ(rc, 1);
@@ -41,7 +45,8 @@ TEST(HashObjectTest, FileNotPresent){
 
 TEST(HashObjectTest, EmptyFile){
     testing::internal::CaptureStdout();
-    int rc = hash_object({std::string(TEST_DATA_DIR) + "/empty.txt"});
+    std::vector<std::string> input = {std::string(TEST_DATA_DIR) + "/empty.txt"};
+    int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStdout();
 
     EXPECT_EQ(rc, 0);
@@ -50,7 +55,8 @@ TEST(HashObjectTest, EmptyFile){
 
 TEST(HashObjectTest, ABCFile){
     testing::internal::CaptureStdout();
-    int rc = hash_object({std::string(TEST_DATA_DIR) + "/abc.txt"});
+    std::vector<std::string> input = {std::string(TEST_DATA_DIR) + "/abc.txt"};
+    int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStdout();
 
     EXPECT_EQ(rc, 0);
@@ -59,7 +65,8 @@ TEST(HashObjectTest, ABCFile){
 
 TEST(HashObjectTest, ContentPassed){
     testing::internal::CaptureStdout();
-    int rc = hash_object({"--stdin"});
+    std::vector<std::string> input = {"--stdin"};
+    int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStdout();
 
     EXPECT_EQ(rc, 0);
