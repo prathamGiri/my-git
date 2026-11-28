@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(mygit_lib 
     src/core/sha1.cpp
+    src/core/zlib.cpp
     src/commands/hash_object.cpp
 )
 target_include_directories(mygit_lib
@@ -25,6 +26,9 @@ endif()
 
 add_executable(mygit app/main.cpp)
 target_link_libraries(mygit PRIVATE mygit_lib)
+
+find_package(ZLIB REQUIRED)
+target_link_libraries(mygit PRIVATE ZLIB::ZLIB)
 
 include(FetchContent)
 FetchContent_Declare(

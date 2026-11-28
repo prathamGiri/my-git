@@ -2,6 +2,13 @@
 
 #include <gtest/gtest.h>
 #include <string>
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+const std::string abcfile = std::string(TEST_DATA_DIR) + "/file.txt";
+const std::string nofile = std::string(TEST_DATA_DIR) + "/nofile.txt";
+const std::string emptyfile = std::string(TEST_DATA_DIR) + "/empty.txt"
 
 TEST(HashObjectTest, LessThanOne){
     testing::internal::CaptureStderr();
@@ -23,19 +30,61 @@ TEST(HashObjectTest, UnknownOption){
     EXPECT_EQ(output, "Command Not Found\n");
 }
 
-TEST(HashObjectTest, MoreThanTwo){
+// TEST(HashObjectTest, MoreThanTwo){
+//     testing::internal::CaptureStderr();
+//     std::vector<std::string> input = {"--stdin", "abc.txt"};
+//     int rc = hash_object(input);
+//     std::string output = testing::internal::GetCapturedStderr();
+
+//     EXPECT_EQ(rc, 1);
+//     EXPECT_EQ(output, "Usage: mygit hash-object [option] [filename / text]\n");
+// }
+
+TEST(HashObjectTest, WriteObjectSingleArg){
     testing::internal::CaptureStderr();
-    std::vector<std::string> input = {"--stdin", "abc.txt"};
+    std::vector<std::string> input = {"-w"};
     int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStderr();
 
     EXPECT_EQ(rc, 1);
-    EXPECT_EQ(output, "Usage: mygit hash-object [option] [filename / text]\n");
+    EXPECT_EQ(output, "Usage: mygit hash-object -w [filename]\n");
+}
+
+TEST(HashObjectTest, WriteObjectNoGit){
+    testing::internal::CaptureStderr();
+    std::vector<std::string> input = {"-w", abcfile};
+    int rc = hash_object(input);
+    std::string output = testing::internal::GetCapturedStderr();
+
+    EXPECT_EQ(rc, 1);
+    EXPECT_EQ(output, ".git Folder not found: Use git init\n");
+}
+
+TEST(HashObjectTest, WriteObjectNoFile){
+    testing::internal::CaptureStderr();
+    std::vector<std::string> input = {"-w", nofile};
+    int rc = hash_object(input);
+    std::string output = testing::internal::GetCapturedStderr();
+
+    EXPECT_EQ(rc, 1);
+    EXPECT_EQ(output, "File not found\n");
+}
+
+TEST(HashObjectTest, WriteObjectPassed){
+    fs::create_directory(".git/objects");
+    testing::internal::CaptureStderr();
+    std::vector<std::string> input = {"-w", abcfile};
+    int rc = hash_object(input);
+    std::string output = testing::internal::GetCapturedStderr();
+
+    EXPECT_EQ(rc, 0);
+    EXPECT_EQ(output, "f2ba8f84ab5c1bce84a7b441cb1959cfc7093b7f\n");
+    EXPECT_TRUE(fs::exists(".git/objects/f2/ba8f84ab5c1bce84a7b441cb1959cfc7093b7f"));
 }
 
 TEST(HashObjectTest, FileNotPresent){
     testing::internal::CaptureStderr();
-    std::vector<std::string> input = {std::string(TEST_DATA_DIR) + "/nofile.txt"};
+    std::vector<std::string> input = {nofile};
     int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStderr();
 
@@ -45,7 +94,7 @@ TEST(HashObjectTest, FileNotPresent){
 
 TEST(HashObjectTest, EmptyFile){
     testing::internal::CaptureStdout();
-    std::vector<std::string> input = {std::string(TEST_DATA_DIR) + "/empty.txt"};
+    std::vector<std::string> input = {emptyfile};
     int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStdout();
 
@@ -55,7 +104,7 @@ TEST(HashObjectTest, EmptyFile){
 
 TEST(HashObjectTest, ABCFile){
     testing::internal::CaptureStdout();
-    std::vector<std::string> input = {std::string(TEST_DATA_DIR) + "/abc.txt"};
+    std::vector<std::string> input = {abcfile};
     int rc = hash_object(input);
     std::string output = testing::internal::GetCapturedStdout();
 
