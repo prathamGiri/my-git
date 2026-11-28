@@ -2,5 +2,5 @@
 
 #include <string>
 
-std::string zcompress(std::string &in, int level);
+std::string zcompress(const std::string &in, int level = 6);
 std::string zdecompress(const std::string& in);

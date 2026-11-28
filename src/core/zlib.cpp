@@ -4,7 +4,7 @@
 #include <string>
 #include <stdexcept>
 
-std::string zcompress(const std::string& in, int level = Z_DEFAULT_COMPRESSION) {
+std::string zcompress(const std::string& in, int level) {
     uLongf outLen = compressBound(in.size());
     std::string out(outLen, '\0');
     int rc = compress2(

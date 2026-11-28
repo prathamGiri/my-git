@@ -1,14 +1,16 @@
 #include "mygit/commands.hpp"
+#include "mygit/zlib.hpp"
 
 #include <gtest/gtest.h>
 #include <string>
+#include <fstream>
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
-const std::string abcfile = std::string(TEST_DATA_DIR) + "/file.txt";
+const std::string abcfile = std::string(TEST_DATA_DIR) + "/abc.txt";
 const std::string nofile = std::string(TEST_DATA_DIR) + "/nofile.txt";
-const std::string emptyfile = std::string(TEST_DATA_DIR) + "/empty.txt"
+const std::string emptyfile = std::string(TEST_DATA_DIR) + "/empty.txt";
 
 TEST(HashObjectTest, LessThanOne){
     testing::internal::CaptureStderr();
@@ -61,6 +63,7 @@ TEST(HashObjectTest, WriteObjectNoGit){
 }
 
 TEST(HashObjectTest, WriteObjectNoFile){
+    fs::create_directories(".git/objects");
     testing::internal::CaptureStderr();
     std::vector<std::string> input = {"-w", nofile};
     int rc = hash_object(input);
@@ -71,15 +74,29 @@ TEST(HashObjectTest, WriteObjectNoFile){
 }
 
 TEST(HashObjectTest, WriteObjectPassed){
-    fs::create_directory(".git/objects");
-    testing::internal::CaptureStderr();
+    fs::create_directories(".git/objects");
+    testing::internal::CaptureStdout();
     std::vector<std::string> input = {"-w", abcfile};
     int rc = hash_object(input);
-    std::string output = testing::internal::GetCapturedStderr();
+    std::string output = testing::internal::GetCapturedStdout();
 
     EXPECT_EQ(rc, 0);
     EXPECT_EQ(output, "f2ba8f84ab5c1bce84a7b441cb1959cfc7093b7f\n");
     EXPECT_TRUE(fs::exists(".git/objects/f2/ba8f84ab5c1bce84a7b441cb1959cfc7093b7f"));
+
+    std::ifstream actual_in(abcfile, std::ios::binary);
+    std::string actual_data(
+        (std::istreambuf_iterator<char>(actual_in)),
+        std::istreambuf_iterator<char>()
+    );
+    actual_data = "blob " + std::to_string(actual_data.size()) + '\0' + actual_data;
+
+    std::ifstream comp_in(".git/objects/f2/ba8f84ab5c1bce84a7b441cb1959cfc7093b7f", std::ios::binary);
+    std::string comp_data(
+        (std::istreambuf_iterator<char>(comp_in)),
+        std::istreambuf_iterator<char>()
+    );
+    EXPECT_EQ(zdecompress(comp_data), actual_data);
 }
 
 TEST(HashObjectTest, FileNotPresent){

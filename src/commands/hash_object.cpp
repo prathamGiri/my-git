@@ -12,18 +12,18 @@ namespace {
     int add_header(std::string &filename, std::string &file_content){
         std::ifstream in(filename, std::ios::binary);
         if (!in) return 1;
-        file_content(
-            // this is an iterator that reads characters directly 
+        // this is an iterator that reads characters directly 
             // from a stream's underlying buffer
+        std::string content(
             (std::istreambuf_iterator<char>(in)), 
             std::istreambuf_iterator<char>()
         );
-        file_content = "blob " + std::to_string(file_content.size()) + '\0' + file_content;
+        file_content = "blob " + std::to_string(content.size()) + '\0' + content;
         return 0;
     }
 }
 
-int hash_object(std::vector<std::string> &args, std::istream &input = std::cin){
+int hash_object(std::vector<std::string> &args, std::istream &input){
     size_t args_c = args.size();
     if (args_c < 1) 
     {
@@ -31,7 +31,7 @@ int hash_object(std::vector<std::string> &args, std::istream &input = std::cin){
         return 1;
     }
 
-    if (args[0]  == '-w')
+    if (args[0] == "-w")
     {
         if (args_c < 2)
         {
@@ -58,7 +58,7 @@ int hash_object(std::vector<std::string> &args, std::istream &input = std::cin){
             +content_hash.substr(2,content_hash.size()-2),
             std::ios::binary
         );
-        out >> compressed_data;
+        out << compressed_data;
         std::cout << content_hash << "\n";
         return 0;
     }else if (args[0] == "--stdin")

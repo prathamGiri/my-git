@@ -18,6 +18,9 @@ target_include_directories(mygit_lib
     PRIVATE ${PROJECT_SOURCE_DIR}/src
 )
 
+find_package(ZLIB REQUIRED)
+target_link_libraries(mygit_lib PRIVATE ZLIB::ZLIB)
+
 if(MSVC)
     target_compile_options(mygit_lib PRIVATE /W4 /permissive-)
 else()
@@ -26,9 +29,6 @@ endif()
 
 add_executable(mygit app/main.cpp)
 target_link_libraries(mygit PRIVATE mygit_lib)
-
-find_package(ZLIB REQUIRED)
-target_link_libraries(mygit PRIVATE ZLIB::ZLIB)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -41,6 +41,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 add_executable(tests 
     tests/sha1_test.cpp
+    tests/zlib_tests.cpp
     tests/hash_object_test.cpp
 )
 target_link_libraries(tests PRIVATE mygit_lib GTest::gtest_main)
